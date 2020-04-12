@@ -59,6 +59,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Raheela Asalm
  * @author Sergey Serdyuk
  */
+//容器工厂配置类
 @Configuration(proxyBeanMethods = false)
 class ServletWebServerFactoryConfiguration {
 
@@ -67,6 +68,7 @@ class ServletWebServerFactoryConfiguration {
 	@ConditionalOnMissingBean(value = ServletWebServerFactory.class, search = SearchStrategy.CURRENT)
 	static class EmbeddedTomcat {
 
+		//配置tomcat 容器工厂
 		@Bean
 		TomcatServletWebServerFactory tomcatServletWebServerFactory(
 				ObjectProvider<TomcatConnectorCustomizer> connectorCustomizers,

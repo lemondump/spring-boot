@@ -264,16 +264,28 @@ public class SpringApplication {
 	 * @see #setSources(Set)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	//创建SpringApplication对象
+	// ①:保存主配置类
+	// ②：保存web应用的配置类型
+	// ③：去mate-info/spring.factories文件中获取 ApplicationContextInitializer(容器初始化器) 保存到 springapplication对象中
+	// ④：去mate-info/spring.factories文件中获取 ApplicationListener(容器监听器) 保存到 springapplication对象中
+	// ⑤：保存选取 主配置类
 	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
 		this.resourceLoader = resourceLoader;
 		Assert.notNull(primarySources, "PrimarySources must not be null");
+		//保存主配置类
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
+		//保存web应用的类型
 		this.webApplicationType = WebApplicationType.deduceFromClasspath();
+		//保存 容器初始化器(ApplicationContextInitializer类型的)
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+		//把监听器保存到 SpringApplication中[ApplicationListener]
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+		//保存主配置类
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
 
+	//查找主配置类 查询的依据就是看哪个方法是否有main方法
 	private Class<?> deduceMainApplicationClass() {
 		try {
 			StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
@@ -296,37 +308,61 @@ public class SpringApplication {
 	 * @return a running {@link ApplicationContext}
 	 */
 	public ConfigurableApplicationContext run(String... args) {
+		//stopWatch用来计时的
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
+		//创建一个 容器对象
 		ConfigurableApplicationContext context = null;
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
 		configureHeadlessProperty();
+		//去meta-info/spring.factories中获取SpringApplicationRunListener 监听器(事件发布监听器)
 		SpringApplicationRunListeners listeners = getRunListeners(args);
+		//发布容器 starting事件(通过spring的事件多播器)
 		listeners.starting();
 		try {
+			//封装命令行参数
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+			//准备容器环境
+			// 1:获取或者创建环境
+			// 2：把命令行参数设置到环境中
+			// 3：通过监听器发布环境准备事件
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
 			configureIgnoreBeanInfo(environment);
+			//打印springboot的图标
 			Banner printedBanner = printBanner(environment);
+			//创建容器 根据webApplicationType 来创建容器 通过反射创建
 			context = createApplicationContext();
+			//去meta-info类中 获取异常报告
 			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
 					new Class[] { ConfigurableApplicationContext.class }, context);
+			//准备环境
+			// 1：把环境设置到容器中
+			// 2: 循环调用AppplicationInitnazlier 进行容器初始化工作
+			// 3:发布容器上下文准备完成事件
+			// 4:注册关于springboot特性的相关单例Bean
+			// 5:发布容器上下文加载完毕事件
 			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
+			//spring启动流程那一套(TOMCAT进去看)
 			refreshContext(context);
+			//运行 ApplicationRunner 和CommandLineRunner
 			afterRefresh(context, applicationArguments);
 			stopWatch.stop();
 			if (this.logStartupInfo) {
 				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
 			}
+			//发布容器启动事件
 			listeners.started(context);
+			//运行 ApplicationRunner 和CommandLineRunner
 			callRunners(context, applicationArguments);
 		}
 		catch (Throwable ex) {
+			//出现异常；调用异常分析保护类进行分析
 			handleRunFailure(context, ex, exceptionReporters, listeners);
 			throw new IllegalStateException(ex);
 		}
 
 		try {
+			//发布容器运行事件
 			listeners.running(context);
 		}
 		catch (Throwable ex) {
@@ -420,6 +456,7 @@ public class SpringApplication {
 		return getSpringFactoriesInstances(type, new Class<?>[] {});
 	}
 
+	//还是去META-INFO/spring.factories 中获取指定类型的配置，用于初始化容器
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
 		ClassLoader classLoader = getClassLoader();
 		// Use names and ensure unique to protect against duplicates

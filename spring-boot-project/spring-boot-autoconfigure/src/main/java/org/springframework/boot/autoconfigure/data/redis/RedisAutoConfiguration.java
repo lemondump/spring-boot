@@ -45,11 +45,14 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * @since 1.0.0
  */
 @Configuration(proxyBeanMethods = false)
+//判断是否导入了 redis的jar包
 @ConditionalOnClass(RedisOperations.class)
+//开启自动配置属性类加载到容器中
 @EnableConfigurationProperties(RedisProperties.class)
 @Import({ LettuceConnectionConfiguration.class, JedisConnectionConfiguration.class })
 public class RedisAutoConfiguration {
 
+	//自动配置了一个 redisTemlate 操作对象的
 	@Bean
 	@ConditionalOnMissingBean(name = "redisTemplate")
 	public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory)
@@ -59,6 +62,7 @@ public class RedisAutoConfiguration {
 		return template;
 	}
 
+	//操作字符串的
 	@Bean
 	@ConditionalOnMissingBean
 	public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory)

@@ -84,16 +84,21 @@ public class BasicErrorController extends AbstractErrorController {
 		return this.errorProperties.getPath();
 	}
 
+	//处理浏览器页面异常
 	@RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView errorHtml(HttpServletRequest request, HttpServletResponse response) {
+		//获取状态码
 		HttpStatus status = getStatus(request);
+		//获取页面的模型数据
 		Map<String, Object> model = Collections
 				.unmodifiableMap(getErrorAttributes(request, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
 		response.setStatus(status.value());
+		//解析错误视图
 		ModelAndView modelAndView = resolveErrorView(request, response, status, model);
 		return (modelAndView != null) ? modelAndView : new ModelAndView("error", model);
 	}
 
+	//处理postman 请求的Json数据异常错误
 	@RequestMapping
 	public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
 		HttpStatus status = getStatus(request);

@@ -132,6 +132,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
  * @author Artsiom Yudovin
  * @since 2.0.0
  */
+//容器中 没有WebMvcConfigurationSupport 该配置文件才生生效,
+// 但是如果我们使用了 @EnableWebMvc 导入了WebMvcConfiurationSupport的配置,所以导致该配置类失效
+// 只保存了springmvc的最基本的功能
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication(type = Type.SERVLET)
 @ConditionalOnClass({ Servlet.class, DispatcherServlet.class, WebMvcConfigurer.class })
@@ -139,6 +142,13 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
 @AutoConfigureAfter({ DispatcherServletAutoConfiguration.class, TaskExecutionAutoConfiguration.class,
 		ValidationAutoConfiguration.class })
+//springboot整合springmvc功能
+//①:ContentNegotiatingViewResolver 和 BeanNameViewResolver 视图解析器 视图解析器的作用:根据方法的值找到对应的视图
+// ②:Support for serving static resources, including support for WebJars 支持静态资源和webJars
+// ③:Converter ,日期格式化器 Formatter
+// ④:消息装换器: HttpMessageConverters
+// ⑤:首页设置index.html
+// ⑥:图标支持 Favicon
 public class WebMvcAutoConfiguration {
 
 	public static final String DEFAULT_PREFIX = "";

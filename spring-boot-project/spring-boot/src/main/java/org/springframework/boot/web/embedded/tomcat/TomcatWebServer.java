@@ -106,6 +106,7 @@ public class TomcatWebServer implements WebServer {
 		initialize();
 	}
 
+	//tomcat启动流程
 	private void initialize() throws WebServerException {
 		logger.info("Tomcat initialized with port(s): " + getPortsDescription(false));
 		synchronized (this.monitor) {
@@ -122,6 +123,7 @@ public class TomcatWebServer implements WebServer {
 				});
 
 				// Start the server to trigger initialization listeners
+				//启动Tomcat
 				this.tomcat.start();
 
 				// We can re-throw failure exception directly in the main thread
@@ -136,6 +138,10 @@ public class TomcatWebServer implements WebServer {
 
 				// Unlike Jetty, all Tomcat threads are daemon threads. We create a
 				// blocking non-daemon to stop immediate shutdown
+				//该线程每10秒检查一次tomcat是否接收到结束信号，如果接收到，则结束执行。
+				//设置该线程的原因 : 所有的tomcat线程都是daemon线程，如果没有这样一个非daemon线程，
+				//整个程序会马上退出。这个线程一直执行 springboot就不会执行完毕
+				//tomcat会调用方法改变这个信号值
 				startDaemonAwaitThread();
 			}
 			catch (Exception ex) {

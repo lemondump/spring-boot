@@ -67,6 +67,11 @@ public class WebServerFactoryCustomizerBeanPostProcessor implements BeanPostProc
 
 	@SuppressWarnings("unchecked")
 	private void postProcessBeforeInitialization(WebServerFactory webServerFactory) {
+		//执行所有的WebServerFactory定制器定制
+		//三个定制器定制tomcat的功能
+		//ServletWebServerFactoryCustomizer
+		//TomcatServletWebServerFactoryCustomizer
+		//TomcatWebServerFactoryCustomizer
 		LambdaSafe.callbacks(WebServerFactoryCustomizer.class, getCustomizers(), webServerFactory)
 				.withLogger(WebServerFactoryCustomizerBeanPostProcessor.class)
 				.invoke((customizer) -> customizer.customize(webServerFactory));

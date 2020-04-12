@@ -44,11 +44,13 @@ import org.springframework.core.env.Environment;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(ServerProperties.class)
+//内嵌web容器工厂自定义定制器装配类)
 public class EmbeddedWebServerFactoryCustomizerAutoConfiguration {
 
 	/**
 	 * Nested configuration if Tomcat is being used.
 	 */
+	//配置tomcat的
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass({ Tomcat.class, UpgradeProtocol.class })
 	public static class TomcatWebServerFactoryCustomizerConfiguration {

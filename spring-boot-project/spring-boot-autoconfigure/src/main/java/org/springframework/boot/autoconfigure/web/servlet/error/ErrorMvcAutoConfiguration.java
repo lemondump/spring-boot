@@ -111,6 +111,8 @@ public class ErrorMvcAutoConfiguration {
 				errorViewResolvers.orderedStream().collect(Collectors.toList()));
 	}
 
+	//（错误页面定制器） 作用：系统出现错误以后来到/error请求进行处理；
+	//那么当我们 发生错误，需要/error 的请求映射来请求 接下来就会引出另外一个组件 来处理/error请求
 	@Bean
 	public ErrorPageCustomizer errorPageCustomizer(DispatcherServletPath dispatcherServletPath) {
 		return new ErrorPageCustomizer(this.serverProperties, dispatcherServletPath);

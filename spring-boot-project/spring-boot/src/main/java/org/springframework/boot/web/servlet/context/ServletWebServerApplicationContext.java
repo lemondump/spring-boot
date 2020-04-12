@@ -147,6 +147,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		}
 	}
 
+	//tomcat启动入口
 	@Override
 	protected void onRefresh() {
 		super.onRefresh();
@@ -187,6 +188,8 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		WebServer webServer = this.webServer;
 		ServletContext servletContext = getServletContext();
 		if (webServer == null && servletContext == null) {
+			//获取web 服务器工厂
+			//ServletWebServerFactoryConfiguration的tomcatServletWebServerFactory装载进去的工厂（ServletWebServerFactoryAutoConfiguration）
 			ServletWebServerFactory factory = getWebServerFactory();
 			this.webServer = factory.getWebServer(getSelfInitializer());
 		}

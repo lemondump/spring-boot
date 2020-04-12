@@ -98,28 +98,37 @@ public class DefaultErrorViewResolver implements ErrorViewResolver, Ordered {
 
 	@Override
 	public ModelAndView resolveErrorView(HttpServletRequest request, HttpStatus status, Map<String, Object> model) {
+		//解析视图
 		ModelAndView modelAndView = resolve(String.valueOf(status.value()), model);
+		//没有对应的解析精确匹配的状态码 使用模糊匹配比如4XX 5XX
 		if (modelAndView == null && SERIES_VIEWS.containsKey(status.series())) {
+			//返回4XX 5XX的页面
 			modelAndView = resolve(SERIES_VIEWS.get(status.series()), model);
 		}
 		return modelAndView;
 	}
 
 	private ModelAndView resolve(String viewName, Map<String, Object> model) {
+		// error/404
 		String errorViewName = "error/" + viewName;
+		//视图是否有模版引擎解析
 		TemplateAvailabilityProvider provider = this.templateAvailabilityProviders.getProvider(errorViewName,
 				this.applicationContext);
+		//有模版引擎解析直接返回
 		if (provider != null) {
 			return new ModelAndView(errorViewName, model);
 		}
+		//静态html的页面解析
 		return resolveResource(errorViewName, model);
 	}
 
 	private ModelAndView resolveResource(String viewName, Map<String, Object> model) {
 		for (String location : this.resourceProperties.getStaticLocations()) {
 			try {
+				//在static模版下需要创建一个error/404.html
 				Resource resource = this.applicationContext.getResource(location);
 				resource = resource.createRelative(viewName + ".html");
+				//存在该页面 直接返回
 				if (resource.exists()) {
 					return new ModelAndView(new HtmlResourceView(resource), model);
 				}

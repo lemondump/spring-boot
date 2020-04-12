@@ -105,6 +105,7 @@ public abstract class AbstractErrorController implements ErrorController {
 	 */
 	protected ModelAndView resolveErrorView(HttpServletRequest request, HttpServletResponse response, HttpStatus status,
 			Map<String, Object> model) {
+		//获取容器中的所有错误视图解析器 DefaultErrorViewResolver
 		for (ErrorViewResolver resolver : this.errorViewResolvers) {
 			ModelAndView modelAndView = resolver.resolveErrorView(request, status, model);
 			if (modelAndView != null) {

@@ -84,11 +84,13 @@ public abstract class SpringBootServletInitializer implements WebApplicationInit
 		this.registerErrorPageFilter = registerErrorPageFilter;
 	}
 
+	//war包调用的时候会执行
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		// Logger initialization is deferred in case an ordered
 		// LogServletContextInitializer is being used
 		this.logger = LogFactory.getLog(getClass());
+		//创建web应用的上下文对象
 		WebApplicationContext rootAppContext = createRootApplicationContext(servletContext);
 		if (rootAppContext != null) {
 			servletContext.addListener(new ContextLoaderListener(rootAppContext) {
@@ -107,8 +109,10 @@ public abstract class SpringBootServletInitializer implements WebApplicationInit
 	}
 
 	protected WebApplicationContext createRootApplicationContext(ServletContext servletContext) {
+		//创建spring应用的构建器
 		SpringApplicationBuilder builder = createSpringApplicationBuilder();
 		builder.main(getClass());
+		//设置环境
 		ApplicationContext parent = getExistingRootWebApplicationContext(servletContext);
 		if (parent != null) {
 			this.logger.info("Root context already created (using as parent).");
@@ -117,6 +121,7 @@ public abstract class SpringBootServletInitializer implements WebApplicationInit
 		}
 		builder.initializers(new ServletContextApplicationContextInitializer(servletContext));
 		builder.contextClass(AnnotationConfigServletWebServerApplicationContext.class);
+		//调用我们自己启动类上的confiure方法 传入我们自己的主启动类
 		builder = configure(builder);
 		builder.listeners(new WebEnvironmentPropertySourceInitializer(servletContext));
 		SpringApplication application = builder.build();
@@ -131,6 +136,7 @@ public abstract class SpringBootServletInitializer implements WebApplicationInit
 		if (this.registerErrorPageFilter) {
 			application.addPrimarySources(Collections.singleton(ErrorPageFilterConfiguration.class));
 		}
+		//调用我们类上的run方法，和内置tomcat一样的流程了
 		return run(application);
 	}
 

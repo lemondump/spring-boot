@@ -46,6 +46,7 @@ public class ServletWebServerFactoryCustomizer
 		return 0;
 	}
 
+	//ServletWebServerFactoryCustomizer核心代码.
 	@Override
 	public void customize(ConfigurableServletWebServerFactory factory) {
 		PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();

@@ -40,6 +40,9 @@ import org.springframework.util.Assert;
  * @see ServletContext#addFilter(String, Filter)
  * @see DelegatingFilterProxyRegistrationBean
  */
+//注册fifter
+//实际是ServletContextInitializer的一个子类
+//servlet 3.0+的web容器中注册过滤器的一种方式
 public class FilterRegistrationBean<T extends Filter> extends AbstractFilterRegistrationBean<T> {
 
 	private T filter;

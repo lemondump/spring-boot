@@ -75,6 +75,7 @@ public class TomcatWebServerFactoryCustomizer
 		return 0;
 	}
 
+	//tomat 工厂定制器 是用来修改设置容器的内容的(把serverProperties的属性设置到tomcat的创建工厂中)
 	@Override
 	public void customize(ConfigurableTomcatWebServerFactory factory) {
 		ServerProperties properties = this.serverProperties;

@@ -45,6 +45,7 @@ public class TomcatServletWebServerFactoryCustomizer
 		return 0;
 	}
 
+	//TomcatServletWebServerFactoryCustomizer核心定制代码
 	@Override
 	public void customize(TomcatServletWebServerFactory factory) {
 		ServerProperties.Tomcat tomcatProperties = this.serverProperties.getTomcat();
